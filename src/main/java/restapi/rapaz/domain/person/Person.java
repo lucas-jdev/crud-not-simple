@@ -28,6 +28,7 @@ public class Person implements Serializable {
     private String lastName;
     private String email;
     private Integer year;
+    private Boolean majorYear;
 
     public void setName(String name) {
         if (name == null || name.isBlank()) {
