@@ -28,20 +28,12 @@ public class Person implements Serializable {
     private String lastName;
     private String email;
     private Integer year;
-    private Boolean majorYear;
 
     public void setName(String name) {
         if (name == null || name.isBlank()) {
             throw new BusinessException("Nome não pode ser nulo ou vazio");
         }
         this.name = name;
-    }
-
-    private void setMajorYear() {
-        if (year < 18) {
-            throw new BusinessException("Idade não pode ser menor que 18");
-        }
-        this.majorYear = this.year >= 18;
     }
 
     public void setLastName(String sobrenome) {
