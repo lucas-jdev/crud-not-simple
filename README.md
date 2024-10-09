@@ -3,7 +3,7 @@
 <img width=250 src="https://i.ibb.co/BVj8mPp/over-engenniring-1.gif"></img> 
 over-engineering...
 
-![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)
+[![Licence](https://img.shields.io/github/license/Ileriayo/markdown-badges?style=for-the-badge)](./LICENSE)
 
 ## 🚀 Description
 
