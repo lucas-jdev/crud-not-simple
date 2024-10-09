@@ -36,13 +36,6 @@ public class Person implements Serializable {
         this.name = name;
     }
 
-    private void setMajorYear() {
-        if (year < 18) {
-            throw new BusinessException("Idade não pode ser menor que 18");
-        }
-        this.majorYear = this.year >= 18;
-    }
-
     public void setLastName(String sobrenome) {
         if (sobrenome == null || sobrenome.isBlank()) {
             throw new BusinessException("Sobrenome não pode ser nulo ou vazio");
