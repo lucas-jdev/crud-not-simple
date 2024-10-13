@@ -13,9 +13,6 @@ on:
     branches: [ "dev", "main" ]
   pull_request:
 
-env:
-  MAVEN_CLI_OPTS: -s .m2/settings.xml --batch-mode -Dorg.slf4j.simpleLogger.defaultLogLevel=error
-
 jobs:
   continous-integration:
     runs-on: ubuntu-latest
@@ -29,9 +26,9 @@ jobs:
           distribution: 'zulu'
           cache: maven
       - name: build
-        run: mvn $MAVEN_CLI_OPTS compile 
+        run: mvn compile 
       - name: tests
-        run: mvn $MAVEN_CLI_OPTS test
+        run: mvn test
   
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
       - name: Update dependency graph
