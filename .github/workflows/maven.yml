@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'openjdk'
+          distribution: 'zulu'
           cache: maven
       - name: build
         run: mvn $MAVEN_CLI_OPTS compile 
