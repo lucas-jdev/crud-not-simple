@@ -3,6 +3,7 @@ package overengineer.projecthttp.infra.application_service.crud.person;
 import org.springframework.stereotype.Service;
 import overengineer.projecthttp.infra.application_service.crud.CrudService;
 import overengineer.projecthttp.infra.exception.ApplicationException;
+import overengineer.projecthttp.infra.rabbitmq.producer.EmailProducer;
 import overengineer.projecthttp.infra.use_case.crud.person.*;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.*;
 
@@ -11,12 +12,13 @@ import java.util.UUID;
 
 @Service
 public record CrudServicePerson(
-        SavePerson savePerson,
-        FindAllPeople findAllPeople,
-        FindAllPeopleActives findAllPeopleActives,
-        FindPerson findPerson,
-        DeletePerson deletePerson,
-        UpdatePerson updatePerson
+    SavePerson savePerson,
+    FindAllPeople findAllPeople,
+    FindAllPeopleActives findAllPeopleActives,
+    FindPerson findPerson,
+    DeletePerson deletePerson,
+    UpdatePerson updatePerson,
+    EmailProducer emailProducer
 ) implements CrudService {
 
     @Override
@@ -35,7 +37,9 @@ public record CrudServicePerson(
 
     @Override
     public PersonSaved save(PersonInsert person) throws ApplicationException {
-        return savePerson.execute(person);
+        PersonSaved personSaved = savePerson.execute(person);
+        emailProducer.sendEmail(personSaved.email());
+        return personSaved;
     }
 
     @Override

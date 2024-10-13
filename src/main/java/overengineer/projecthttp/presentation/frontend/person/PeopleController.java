@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import overengineer.projecthttp.infra.application_service.crud.person.CrudServicePerson;
 import overengineer.projecthttp.infra.exception.ApplicationException;
-import overengineer.projecthttp.infra.use_case.crud.person.*;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonFound;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonInsert;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonSetUpdate;
@@ -21,9 +21,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/people")
 public record PeopleController(
-    SavePerson savePerson,
-    FindPerson findPerson,
-    UpdatePerson updatePerson
+    CrudServicePerson crudServicePerson
 ) implements CRUD<PersonInput> {
 
     private static final String PEOPLE_INDEX = "people/index";
@@ -52,7 +50,7 @@ public record PeopleController(
     }
 
     private void edit(Model model, String id) {
-        PersonFound personFound = findPerson.byId(UUID.fromString(id));
+        PersonFound personFound = crudServicePerson.findById(UUID.fromString(id));
 
         model.addAttribute(FIELD_PERSON, new PersonInput(personFound.id().toString(), personFound.name(),
                 personFound.lastName(),
@@ -66,9 +64,9 @@ public record PeopleController(
         try {
             if (person.getId() != null && !person.getId().isBlank()) {
                 UUID id = UUID.fromString(person.getId());
-                updatePerson.execute(id, new PersonSetUpdate(person.getName(),  person.getEmail(), person.getLastName(), person.getBirthDate()));
+                crudServicePerson.update(id, new PersonSetUpdate(person.getName(),  person.getEmail(), person.getLastName(), person.getBirthDate()));
             } else {
-                savePerson.execute(new PersonInsert(person.getName(), person.getLastName(), person.getBirthDate(), person.getEmail()));
+                crudServicePerson.save(new PersonInsert(person.getName(), person.getLastName(), person.getBirthDate(), person.getEmail()));
             }
         } catch (ApplicationException e) {
             model.addAttribute(FIELD_PERSON, person);
