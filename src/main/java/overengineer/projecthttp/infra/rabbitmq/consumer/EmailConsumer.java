@@ -17,7 +17,7 @@ public class EmailConsumer {
     @RabbitListener(queues = "${spring.rabbitmq.queue}")
     public void consume(Email email) {
         emailService.sendEmail(email);
-        log.info("Email sent to: {}", email.getEmailTo());
+        log.info("Email received from queue: {}", email);
     }
 
 }
