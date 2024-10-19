@@ -26,7 +26,8 @@ ALTER TABLE tb_person
     ADD COLUMN p_active BOOLEAN;
 
 ALTER TABLE tb_person
-    ALTER COLUMN p_id INT8 NOT NULL;
+    ALTER COLUMN p_id SET DATA TYPE BIGINT USING (CAST(substring(p_id::text FROM '([0-9]+)') AS bigint)),
+    ALTER COLUMN p_id SET NOT NULL;
 
 ALTER TABLE tb_person
     ADD CONSTRAINT pk_person PRIMARY KEY (p_id);
