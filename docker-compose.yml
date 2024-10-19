@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: 'postgres:15.0'
+    container_name: 'postgres'
+    restart: always
+    ports:
+      - "5555:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+        - db_data:/var/lib/postgresql/data
+
+  rabbitmq:
+      image: 'rabbitmq:3.10.5-management'
+      container_name: 'rabbitmq'
+      restart: always
+      ports:
+      - "5672:5672"
+      - "15672:15672"
+      volumes:
+        - rabbitmq_data:/var/lib/rabbitmq
+        - rabbitmq_log:/var/log/rabbitmq
+
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: 'application'
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#      - rabbitmq
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+  db_data:
