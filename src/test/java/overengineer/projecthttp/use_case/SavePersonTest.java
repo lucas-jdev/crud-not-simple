@@ -35,7 +35,7 @@ class SavePersonTest {
     @BeforeEach
     void setUpEach() {
         person = new Person();
-        person.setName(faker.name().firstName());
+        person.setName(faker.name().nameWithMiddle());
         person.setLastName(faker.name().lastName());
         person.setEmail(faker.internet().emailAddress());
         faker.date().birthday();
