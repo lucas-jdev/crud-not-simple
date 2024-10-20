@@ -23,7 +23,7 @@ public class EmailService {
         simpleMailMessage.setText(email.getBody());
 
         javaMailSender.send(simpleMailMessage);
-        log.info("Email sent to: {}", email.getEmailTo());
+        log.info("Sending email to: {}", email.getEmailTo());
     }
 
 }

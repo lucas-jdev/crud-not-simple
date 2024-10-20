@@ -41,6 +41,6 @@ public class EmailProducer {
         emailMessage.setSubject(subject);
 
         template.convertAndSend(exchange, routingKey, emailMessage);
-        log.info("Email sent to: {}", email);
+        log.info("Email sent to queue: {}", emailMessage);
     }
 }
