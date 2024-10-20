@@ -44,7 +44,6 @@ Neste projeto você verá:
 
 #### Requirements to run:
 - docker
-
 - docker compose
 
 #### Requirements to developement:
