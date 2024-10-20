@@ -14,28 +14,42 @@ services:
     volumes:
         - db_data:/var/lib/postgresql/data
 
-  rabbitmq:
-      image: 'rabbitmq:3.10.5-management'
-      container_name: 'rabbitmq'
-      restart: always
-      ports:
-      - "5672:5672"
-      - "15672:15672"
-      volumes:
-        - rabbitmq_data:/var/lib/rabbitmq
-        - rabbitmq_log:/var/log/rabbitmq
+  fake-smtp:
+    image: 'mailhog/mailhog:latest'
+    container_name: 'mailhog'
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
-#  app:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    container_name: 'application'
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - db
-#      - rabbitmq
+  rabbitmq:
+    image: 'rabbitmq:3.10.5-management'
+    container_name: 'rabbitmq'
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 12s
+      timeout: 10s
+      retries: 5
+
+  app:
+    build: .
+    container_name: 'app'
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+      - rabbitmq
+      - fake-smtp
+    volumes:
+      - .:/app
 
 volumes:
   rabbitmq_data:
