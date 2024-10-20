@@ -44,18 +44,22 @@ Neste projeto você verá:
 
 #### Requirements to run:
 - docker
+- docker compose
 
 #### Requirements to developement:
 - jdk 21
+- docker
+- docker compose
 
 ## Features
 
 - ![status](https://img.shields.io/badge/Saving_a_new_person-OK-greene)
-- ![pendding](https://img.shields.io/badge/Logically_delete_a_person-PENDDING-orange)
+- ![status](https://img.shields.io/badge/Logically_delete_a_person-OK-greene)
 - ![pendding](https://img.shields.io/badge/Find_people_by_year_range-PENDDING-orange)
 - ![status](https://img.shields.io/badge/Find_a_person_by_id-OK-greene)
 - ![pendding](https://img.shields.io/badge/Find_people_by_name-PENDDING-orange)
 - ![status](https://img.shields.io/badge/Update_person,_locating_by_id-OK-greene)
+- ![pendding](https://img.shields.io/badge/Sending_an_email_after_saving_a_person_in_DB-OK-greene)
 
 ## Running locally
 
@@ -71,17 +75,28 @@ Go into the project directory
   cd my-project
 ```
 
-Execute docker
+init server
 
 ```bash
-  docker build
+  docker compose up -d --build
 ```
 
-Init server
+Access the application in the browser
 
 ```bash
-  docker run app
+  http://localhost:8091
 ```
+
+> PS: The application will be running on port 8091, but you want run project with IDE:
+> - step 1 - stop containers with `docker compose down`
+> - step 2 - open IDE and run project
+> - step 3 - access the application in the browser `http://localhost:8080`
+
+> PS2: The database will be running on port 5555
+
+> PS3: The rabbitmq interface will be running on port 15672
+
+> PS4: The mailhog interface will be running on port 8025
 
 ## Running tests
 
@@ -93,9 +108,9 @@ To run the tests, run the following command
 
 ## Author
 
-|  Lucas Fernandes  |
-| --------- |
-| <img src="https://avatars.githubusercontent.com/u/76585138?v=4" style="width: 130px; border-radios: 50%"></img> |
+| Lucas Fernandes                                                                                                  |
+|------------------------------------------------------------------------------------------------------------------|
+| <img src="https://avatars.githubusercontent.com/u/76585138?v=4" style="width: 130px; border-radios: 50%"></img>  |
 
 
 
