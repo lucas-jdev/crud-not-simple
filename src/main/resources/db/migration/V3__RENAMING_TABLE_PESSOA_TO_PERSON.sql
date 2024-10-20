@@ -25,9 +25,11 @@ ALTER TABLE tb_person
 ALTER TABLE tb_person
     ADD COLUMN p_active BOOLEAN;
 
-ALTER TABLE tb_person
-    ALTER COLUMN p_id SET DATA TYPE BIGINT USING (CAST(substring(p_id::text FROM '([0-9]+)') AS bigint)),
-    ALTER COLUMN p_id SET NOT NULL;
+ALTER TABLE tb_person ADD COLUMN new_p_id BIGINT;
+UPDATE tb_person SET new_p_id = CAST(SUBSTRING(p_id::text, 1, LENGTH(p_id::text)) AS BIGINT);
+ALTER TABLE tb_person DROP COLUMN p_id;
+ALTER TABLE tb_person RENAME COLUMN new_p_id TO p_id;
+ALTER TABLE tb_person ALTER COLUMN p_id SET NOT NULL;
 
 ALTER TABLE tb_person
     ADD CONSTRAINT pk_person PRIMARY KEY (p_id);
