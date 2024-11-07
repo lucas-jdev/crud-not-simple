@@ -1,6 +1,4 @@
-package overengineer.projecthttp.domain;
-
-import overengineer.projecthttp.domain.person.Person;
+package overengineer.projecthttp.domain.person;
 
 import java.util.Collection;
 import java.util.Optional;
