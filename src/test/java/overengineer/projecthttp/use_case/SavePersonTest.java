@@ -1,52 +1,35 @@
 package overengineer.projecthttp.use_case;
 
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import overengineer.projecthttp.domain.PersonGateway;
-import overengineer.projecthttp.domain.person.Person;
-import overengineer.projecthttp.doubletests.fakes.PersonRepositoryFakeDB;
 import overengineer.projecthttp.infra.exception.ApplicationException;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonInsert;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonSaved;
 import overengineer.projecthttp.infra.use_case.crud.person.SavePerson;
 
-import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class SavePersonTest {
+class SavePersonTest extends AbstractPersonCommonUseCase {
 
-    private static PersonGateway personGateway;
     private static SavePerson savePerson;
-    private static Faker faker;
-    private Person person;
 
     @BeforeAll
     static void setUp() {
-        personGateway = new PersonRepositoryFakeDB();
+        AbstractPersonCommonUseCase.init();
         savePerson = new SavePerson(personGateway);
-        faker = new Faker();
     }
 
     @BeforeEach
     void setUpEach() {
-        person = new Person();
-        person.setName(faker.name().nameWithMiddle());
-        person.setLastName(faker.name().lastName());
-        person.setEmail(faker.internet().emailAddress());
-        faker.date().birthday();
-        LocalDate birthDate = LocalDate.now().minusYears(faker.number().numberBetween(18, 80));
-        person.setBirthDate(birthDate);
+        super.setValuesToPerson();
     }
 
     @AfterEach
     void tearDownEach() {
-        person = null;
-        personGateway.deleteAll();
+        super.removeAll();
     }
 
     @Test
