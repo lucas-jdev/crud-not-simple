@@ -3,6 +3,7 @@ package overengineer.projecthttp.infra.db;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -18,7 +19,7 @@ public interface PersonRepositoryORM extends JpaRepository<PersonEntity, UUID> {
 
     @Modifying
     @Query("UPDATE PersonEntity SET active = false WHERE publicId = :id")
-    void deleteById(UUID id);
+    void deleteById(@NonNull UUID id);
 
     @Modifying
     @Query("UPDATE PersonEntity SET active = false")

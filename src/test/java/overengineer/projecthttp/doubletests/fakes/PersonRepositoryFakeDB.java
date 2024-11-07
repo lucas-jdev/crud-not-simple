@@ -1,6 +1,6 @@
 package overengineer.projecthttp.doubletests.fakes;
 
-import overengineer.projecthttp.domain.PersonGateway;
+import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.person.Person;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class PersonRepositoryFakeDB implements PersonGateway {
 
     @Override
     public void deleteById(UUID id) {
-        people.removeIf(person -> Objects.equals(person.getId(), id));
+        people.stream().filter(person -> Objects.equals(person.getId(), id)).forEach(Person::inactive);
     }
 
     @Override

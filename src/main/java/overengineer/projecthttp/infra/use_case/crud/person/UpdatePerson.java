@@ -1,7 +1,7 @@
 package overengineer.projecthttp.infra.use_case.crud.person;
 
 import org.springframework.stereotype.Service;
-import overengineer.projecthttp.domain.PersonGateway;
+import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.exception.BusinessException;
 import overengineer.projecthttp.infra.exception.ApplicationException;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.PersonSetUpdate;
