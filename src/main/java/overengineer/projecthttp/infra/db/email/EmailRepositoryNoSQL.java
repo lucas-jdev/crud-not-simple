@@ -1,4 +1,4 @@
-package overengineer.projecthttp.infra.db;
+package overengineer.projecthttp.infra.db.email;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
