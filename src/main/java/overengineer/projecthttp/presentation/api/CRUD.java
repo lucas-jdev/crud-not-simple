@@ -1,6 +1,5 @@
 package overengineer.projecthttp.presentation.api;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -14,18 +13,18 @@ import java.util.Collection;
 public interface CRUD<I, O> {
 
     @PostMapping
-    ResponseEntity<O> create(I dto);
+    O create(I dto);
 
     @GetMapping("/{id}")
-    ResponseEntity<O> read(@PathVariable String id);
+    O read(@PathVariable String id);
 
     @GetMapping
-    ResponseEntity<Collection<O>> readAll();
+    Collection<O> readAll();
 
     @PutMapping("/{id}")
-    ResponseEntity<O> update(@PathVariable String id, @RequestBody I dto);
+    O update(@PathVariable String id, @RequestBody I dto);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> delete(@PathVariable String id);
+    void delete(@PathVariable String id);
 
 }

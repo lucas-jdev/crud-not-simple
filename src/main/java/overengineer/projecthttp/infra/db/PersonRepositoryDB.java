@@ -2,7 +2,7 @@ package overengineer.projecthttp.infra.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import overengineer.projecthttp.domain.PersonGateway;
+import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.person.Person;
 
 import java.util.Collection;
