@@ -25,7 +25,7 @@ public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonRespo
     private final CrudServicePerson crud;
 
     @Override
-    public ResponseEntity<PersonResponseHTTP> create(PersonRequestHTTP dto) {
+    public PersonResponseHTTP create(PersonRequestHTTP dto) {
         PersonInsert personToSave = new PersonInsert(dto.name(), dto.lastName(), dto.birthDate(), dto.email());
         PersonSaved personSaved;
         try {
@@ -33,28 +33,28 @@ public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonRespo
         } catch (ApplicationException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
-        return ResponseEntity.ok(new PersonResponseHTTP(personSaved.id(), personSaved.name(),
-                personSaved.lastName(), personSaved.yearsOld(), personSaved.email(), true));
+        return new PersonResponseHTTP(personSaved.id(), personSaved.name(),
+                personSaved.lastName(), personSaved.yearsOld(), personSaved.email(), true);
     }
 
     @Override
-    public ResponseEntity<PersonResponseHTTP> read(String id) {
+    public PersonResponseHTTP read(String id) {
         UUID uid = UUID.fromString(id);
         PersonFound personFound = crud.findById(uid);
         Integer year = Period.between(personFound.birthDate(), LocalDate.now()).getYears();
-        return ResponseEntity.ok(new PersonResponseHTTP(personFound.id(), personFound.name(),
-                personFound.lastName(), year, personFound.email(), personFound.active()));
+        return new PersonResponseHTTP(personFound.id(), personFound.name(),
+                personFound.lastName(), year, personFound.email(), personFound.active());
     }
 
     @Override
-    public ResponseEntity<Collection<PersonResponseHTTP>> readAll() {
+    public Collection<PersonResponseHTTP> readAll() {
         Collection<PersonFound> people = crud.findAll();
-        return ResponseEntity.ok(people.stream().map(person -> {
+        return people.stream().map(person -> {
             Integer year = Period.between(person.birthDate(), LocalDate.now()).getYears();
             return new PersonResponseHTTP(
                 person.id(), person.name(), person.lastName(), year, person.email(), person.active()
             );
-        }).toList());
+        }).toList();
     }
 
     @GetMapping("/actives")
@@ -69,7 +69,7 @@ public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonRespo
     }
 
     @Override
-    public ResponseEntity<PersonResponseHTTP> update(String id, PersonRequestHTTP dto) {
+    public PersonResponseHTTP update(String id, PersonRequestHTTP dto) {
         UUID uid = UUID.fromString(id);
         PersonSetUpdate personToUpdate = new PersonSetUpdate(dto.name(), dto.email(), dto.lastName(), dto.birthDate());
         PersonUpdated personUpdated;
@@ -78,16 +78,15 @@ public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonRespo
         } catch (ApplicationException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
-        return ResponseEntity.ok(new PersonResponseHTTP(personUpdated.id(), personUpdated.name(),
+        return new PersonResponseHTTP(personUpdated.id(), personUpdated.name(),
                 personUpdated.lastName(), personUpdated.yearsOld(),
-                personUpdated.email(), personUpdated.active()));
+                personUpdated.email(), personUpdated.active());
     }
 
     @Override
-    public ResponseEntity<Void> delete(String id) {
+    public void delete(String id) {
         UUID uid = UUID.fromString(id);
         crud.deleteById(uid);
-        return ResponseEntity.ok().build();
     }
 
 }

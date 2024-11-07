@@ -23,20 +23,20 @@ import java.util.Objects;
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ResponseError> handleRuntimeException(RuntimeException err) {
+    public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException err) {
         log.error("Internal server error", err);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ResponseError(err.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now()));
+                .body(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), err.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ResponseError> handleApiException(ApiException err) {
-        return ResponseEntity.status(err.getStatusCode())
-                .body(new ResponseError(err.getMessage(), err.getStatusCode(), LocalDateTime.now()));
+    public ResponseEntity<ApiResponse<Object>> handleApiException(ApiException err) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), err.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ResponseError> handleConstraintViolation(
+    public ResponseEntity<ApiResponse<Object>> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
         List<String> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -44,23 +44,23 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
                     violation.getPropertyPath() + ": " + violation.getMessage());
         }
 
-        var responseError = new ResponseError(errors.toString(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
-        return new ResponseEntity<>(responseError, new HttpHeaders(), responseError.status());
+        var apiResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), errors.toString(), LocalDateTime.now());
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), apiResponse.status());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ResponseError> handleMethodArgumentTypeMismatch(
+    public ResponseEntity<ApiResponse<Object>> handleMethodArgumentTypeMismatch(
             MethodArgumentTypeMismatchException ex, WebRequest request) {
         Class<?> requiredType = ex.getRequiredType();
         if (Objects.isNull(requiredType)) {
             return ResponseEntity.internalServerError()
-                .body(new ResponseError("Required type is null",
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                .body(new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Required type is null",
                         LocalDateTime.now()));
         }
         String error = ex.getName() + " should be of type " + requiredType.getName();
-        var responseError = new ResponseError(error, HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
-        return new ResponseEntity<>(responseError, new HttpHeaders(), responseError.status());
+        var apiResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), error, LocalDateTime.now());
+        return new ResponseEntity<>(apiResponse, new HttpHeaders(), apiResponse.status());
     }
 
 }
