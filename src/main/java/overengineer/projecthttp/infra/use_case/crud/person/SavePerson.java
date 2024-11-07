@@ -3,7 +3,7 @@ package overengineer.projecthttp.infra.use_case.crud.person;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import overengineer.projecthttp.domain.PersonGateway;
+import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.exception.BusinessException;
 import overengineer.projecthttp.domain.person.Person;
 import overengineer.projecthttp.infra.exception.ApplicationException;
