@@ -36,14 +36,18 @@ public class EmailEntity implements Serializable {
         this.body = email.getBody();
     }
 
-    public void markAsSent() {
-        this.status = Status.SENT;
+    public void markAsSentQueue() {
+        this.status = Status.SENT_QUEUE;
         this.sentAt = LocalDateTime.now();
     }
 
-    public void markAsReceived() {
-        this.status = Status.RECEIVED;
+    public void markAsReceivedQueue() {
+        this.status = Status.RECEIVED_QUEUE;
         this.receivedAt = LocalDateTime.now();
+    }
+
+    public void markAsFailed() {
+        this.status = Status.FAILED;
     }
 
 }

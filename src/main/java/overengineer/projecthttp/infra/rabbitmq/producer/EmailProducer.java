@@ -41,7 +41,13 @@ public class EmailProducer {
         emailMessage.setEmailFrom(emailFrom);
         emailMessage.setSubject(subject);
 
-        template.convertAndSend(exchange, routingKey, emailMessage);
+        try {
+            template.convertAndSend(exchange, routingKey, emailMessage);
+        } catch (Exception e) {
+            log.error("Error sending email: {}", e.getMessage());
+            emailService.failEmail(emailMessage);
+        }
+
         emailService.sendEmail(emailMessage);
     }
 }

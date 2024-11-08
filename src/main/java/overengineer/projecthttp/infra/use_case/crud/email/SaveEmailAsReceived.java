@@ -12,7 +12,7 @@ public record SaveEmailAsReceived(EmailRepositoryNoSQL emailRepositoryNoSQL) {
     public void execute(@NonNull String id) {
         EmailEntity email = emailRepositoryNoSQL.findById(id)
                 .orElseThrow(() -> new ApplicationException("Email not found"));
-        email.markAsReceived();
+        email.markAsReceivedQueue();
         emailRepositoryNoSQL.save(email);
     }
 

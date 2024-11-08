@@ -10,7 +10,7 @@ public record SaveEmailAsSent(EmailRepositoryNoSQL emailRepositoryNoSQL) {
 
     public void execute(Email email) {
         EmailEntity emailEntity = new EmailEntity(email);
-        emailEntity.markAsSent();
+        emailEntity.markAsSentQueue();
         emailRepositoryNoSQL.save(emailEntity);
     }
 
