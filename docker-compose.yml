@@ -11,7 +11,7 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_MONGODB_SERVER: localhost
+      ME_CONFIG_MONGODB_SERVER: mongo
     depends_on:
       - no_sql
     networks:
@@ -24,7 +24,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: "crud"
+      MONGO_INITDB_DATABASE: crud
     expose:
       - 27017
     ports:
