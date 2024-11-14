@@ -6,12 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 @Slf4j
 @Component
@@ -39,23 +40,32 @@ public class ApiResponseFilterSuccess implements WebFilter {
 
         ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(originalResponse) {
             @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+            public Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
                 return Flux.from(body)
                         .collectList()
                         .flatMap(dataBuffers -> {
                             String responseBody = extractResponseBody(dataBuffers);
-                            ApiResponse<Object> apiResponse = createApiResponse(responseBody, statusCode.value());
-                            ResponseEntity<ApiResponse<Object>> responseEntity = ResponseEntity.status(statusCode.value()).body(apiResponse);
-                            String jsonResponse = serializeApiResponse(responseEntity.getBody());
-                            DataBuffer responseBuffer = bufferFactory.wrap(jsonResponse.getBytes(StandardCharsets.UTF_8));
 
-                            setResponseHeaders(originalResponse);
+                            String response = trataJson(responseBody, value -> {
+                                if (!value.startsWith("{")) return value;
+                                ApiResponse<Object> apiResponse = createApiResponse(value, statusCode.value());
+                                ResponseEntity<ApiResponse<Object>> responseEntity = ResponseEntity.status(statusCode.value()).body(apiResponse);
+                                setResponseHeaders(originalResponse);
+                                return serializeApiResponse(responseEntity.getBody());
+                            });
+
+                            DataBuffer responseBuffer = bufferFactory.wrap(response.getBytes(StandardCharsets.UTF_8));
+
                             return super.writeWith(Mono.just(responseBuffer));
                         });
             }
         };
 
         return chain.filter(exchange.mutate().response(decoratedResponse).build());
+    }
+
+    private String trataJson(String value, @NonNull UnaryOperator<String> funcao) {
+        return funcao.apply(value);
     }
 
     private String extractResponseBody(List<? extends DataBuffer> dataBuffers) {
