@@ -46,7 +46,7 @@ public class ApiResponseFilterSuccess implements WebFilter {
                         .flatMap(dataBuffers -> {
                             String responseBody = extractResponseBody(dataBuffers);
 
-                            String response = trataJson(responseBody, value -> {
+                            String response = returnJsonFormattedIfExists(responseBody, value -> {
                                 if (!value.startsWith("{")) return value;
                                 ApiResponse<Object> apiResponse = createApiResponse(value, statusCode.value());
                                 ResponseEntity<ApiResponse<Object>> responseEntity = ResponseEntity.status(statusCode.value()).body(apiResponse);
@@ -64,7 +64,7 @@ public class ApiResponseFilterSuccess implements WebFilter {
         return chain.filter(exchange.mutate().response(decoratedResponse).build());
     }
 
-    private String trataJson(String value, @NonNull UnaryOperator<String> funcao) {
+    private String returnJsonFormattedIfExists(String value, @NonNull UnaryOperator<String> funcao) {
         return funcao.apply(value);
     }
 
