@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -32,12 +33,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class EmailRabbitMQTest {
 
     private static final String DOCKER_IMAGE = "rabbitmq:3.8-management-alpine";
+    private static final Integer PORT_SMTP = 1025;
+    private static final Integer PORT_HTTP = 8025;
 
     @Container
     static RabbitMQContainer container = new RabbitMQContainer(DOCKER_IMAGE);
 
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:8.0.1");
+
+    @Container
+    public static GenericContainer<?> mailhog = new GenericContainer<>("mailhog/mailhog")
+            .withExposedPorts(PORT_SMTP, PORT_HTTP);
 
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
@@ -49,6 +56,10 @@ class EmailRabbitMQTest {
         registry.add("spring.rabbitmq.exchange", () -> "ms-exchange");
         registry.add("spring.rabbitmq.routing-key", () -> "ms-routing");
         registry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+        registry.add("spring.mail.host", mailhog::getHost);
+        registry.add("spring.mail.port", () -> mailhog.getMappedPort(PORT_SMTP));
+        registry.add("spring.mail.username", () -> "sender-test@example.com");
+        registry.add("spring.mail.password", () -> "dev");
     }
 
     private final String exchange = "ms-exchange";
@@ -62,7 +73,7 @@ class EmailRabbitMQTest {
     @Test
     void sendAndReceiveEmail() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        var email = new Email(UUID.randomUUID(), "sender@dev.com", null, null, null, LocalDateTime.now());
+        var email = new Email(UUID.randomUUID(), "sender@dev.com", "lucas.jdev2@gmail.com", "subject", "rapaz", LocalDateTime.now());
         ListenerRabbitMQ listener = harness.getSpy("email");
 
         doAnswer(invocation -> {
