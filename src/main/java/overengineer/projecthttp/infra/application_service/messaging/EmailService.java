@@ -21,7 +21,7 @@ public record EmailService (
 
     public void sendEmail(@NonNull Email email) {
         saveEmailAsSent.execute(email);
-        log.info("Sending email to: {}", email.getEmailTo());
+        log.info("Sending email to queue: {}", email.getEmailTo());
     }
 
     public void receiveEmail(@NonNull Email email) {
@@ -39,7 +39,7 @@ public record EmailService (
         }
 
         saveEmailAsReceived.execute(email.getId().toString());
-        log.info("Receiving email from: {}", email.getEmailFrom());
+        log.info("Sending email: {}", email.getEmailFrom());
     }
 
     public void failEmail(@NonNull Email email) {
