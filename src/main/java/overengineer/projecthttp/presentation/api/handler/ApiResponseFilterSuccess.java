@@ -55,7 +55,6 @@ public class ApiResponseFilterSuccess implements WebFilter {
                             });
 
                             DataBuffer responseBuffer = bufferFactory.wrap(response.getBytes(StandardCharsets.UTF_8));
-
                             return super.writeWith(Mono.just(responseBuffer));
                         });
             }
