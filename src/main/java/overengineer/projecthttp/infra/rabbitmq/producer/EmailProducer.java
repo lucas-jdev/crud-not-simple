@@ -3,9 +3,9 @@ package overengineer.projecthttp.infra.rabbitmq.producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import overengineer.projecthttp.infra.application_service.messaging.EmailService;
 import overengineer.projecthttp.infra.rabbitmq.Email;
 
 import java.util.UUID;
@@ -25,6 +25,7 @@ public class EmailProducer {
     private String emailFrom;
 
     private final RabbitTemplate template;
+    private final EmailService emailService;
 
     public void sendEmail(String email) {
         StringBuilder body = new StringBuilder();
@@ -40,7 +41,13 @@ public class EmailProducer {
         emailMessage.setEmailFrom(emailFrom);
         emailMessage.setSubject(subject);
 
-        template.convertAndSend(exchange, routingKey, emailMessage);
-        log.info("Email sent to queue: {}", emailMessage);
+        try {
+            template.convertAndSend(exchange, routingKey, emailMessage);
+        } catch (Exception e) {
+            log.error("Error sending email: {}", e.getMessage());
+            emailService.failEmail(emailMessage);
+        }
+
+        emailService.sendEmail(emailMessage);
     }
 }
