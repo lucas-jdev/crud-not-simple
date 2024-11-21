@@ -1,6 +1,7 @@
 package overengineer.projecthttp.domain.person;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +29,14 @@ public interface PersonGateway {
      * @return Collection<Person>
      */
     Collection<Person> findAll();
+
+    /**
+     * This method is responsible for find all people by filter
+     * @param filter PersonFilter
+     * @param args Map with key and values
+     * @return
+     */
+    Collection<Person> findAll(PersonFilter<?> filter, Map<String, Object> args);
 
     /**
      * This method is responsible for find all people actives.

@@ -1,5 +1,6 @@
 package overengineer.projecthttp.doubletests.fakes;
 
+import overengineer.projecthttp.domain.person.PersonFilter;
 import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.person.Person;
 
@@ -25,6 +26,11 @@ public class PersonRepositoryFakeDB implements PersonGateway {
     @Override
     public Collection<Person> findAll() {
         return people;
+    }
+
+    @Override
+    public Collection<Person> findAll(PersonFilter<?> filter, Map<String, Object> args) {
+        return List.of();
     }
 
     @Override

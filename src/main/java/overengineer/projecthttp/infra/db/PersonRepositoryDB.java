@@ -1,13 +1,14 @@
 package overengineer.projecthttp.infra.db;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
+import overengineer.projecthttp.domain.person.PersonFilter;
 import overengineer.projecthttp.domain.person.PersonGateway;
 import overengineer.projecthttp.domain.person.Person;
+import overengineer.projecthttp.infra.mapper.PersonMapper;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,18 +36,23 @@ public class PersonRepositoryDB implements PersonGateway {
     @Override
     public Optional<Person> findById(UUID id) {
         return repository.findByPublicId(id)
-                .map(entity -> new Person(entity.getPublicId(), entity.getName(),
-                        entity.getLastName(), entity.getEmail(),
-                        entity.getBirthDate(), entity.isActive()));
+                .map(PersonMapper::entityToDomain);
     }
 
     @Override
     public Collection<Person> findAll() {
         return repository.findAll()
                 .stream()
-                .map(entity -> new Person(entity.getPublicId(), entity.getName(),
-                    entity.getLastName(), entity.getEmail(),
-                    entity.getBirthDate(), entity.isActive()))
+                .map(PersonMapper::entityToDomain)
+                .toList();
+    }
+
+    @Override
+    public Collection<Person> findAll(PersonFilter<?> filter, Map<String, Object> args) {
+        Specification<PersonEntity> specification = (Specification<PersonEntity>) filter.execute(args);
+        return repository.findAll(specification)
+                .stream()
+                .map(PersonMapper::entityToDomain)
                 .toList();
     }
 
@@ -54,9 +60,7 @@ public class PersonRepositoryDB implements PersonGateway {
     public Collection<Person> findAllActives() {
         return repository.findAllByActive()
                 .stream()
-                .map(entity -> new Person(entity.getPublicId(), entity.getName(),
-                        entity.getLastName(), entity.getEmail(),
-                        entity.getBirthDate(), entity.isActive()))
+                .map(PersonMapper::entityToDomain)
                 .toList();
     }
 
