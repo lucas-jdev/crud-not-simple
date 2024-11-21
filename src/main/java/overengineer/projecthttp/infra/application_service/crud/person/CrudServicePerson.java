@@ -1,6 +1,7 @@
 package overengineer.projecthttp.infra.application_service.crud.person;
 
 import org.springframework.stereotype.Service;
+import overengineer.projecthttp.domain.person.PersonFilter;
 import overengineer.projecthttp.infra.application_service.crud.CrudService;
 import overengineer.projecthttp.infra.exception.ApplicationException;
 import overengineer.projecthttp.infra.rabbitmq.producer.EmailProducer;
@@ -8,6 +9,7 @@ import overengineer.projecthttp.infra.use_case.crud.person.*;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.*;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -24,6 +26,10 @@ public record CrudServicePerson(
     @Override
     public Collection<PersonFound> findAll() {
         return findAllPeople.execute();
+    }
+
+    public Collection<PersonFound> findAll(PersonFilter<?> filter, Map<String, Object> parameters) {
+        return findAllPeople.execute(filter, parameters);
     }
 
     public Collection<PersonFound> findAllActives() {
