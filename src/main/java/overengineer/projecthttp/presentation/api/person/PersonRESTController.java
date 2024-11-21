@@ -1,28 +1,29 @@
 package overengineer.projecthttp.presentation.api.person;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import overengineer.projecthttp.domain.person.PersonFilter;
 import overengineer.projecthttp.infra.application_service.crud.person.CrudServicePerson;
 import overengineer.projecthttp.infra.exception.ApplicationException;
+import overengineer.projecthttp.infra.mapper.PersonMapper;
 import overengineer.projecthttp.infra.use_case.crud.person.dto.*;
 import overengineer.projecthttp.presentation.api.CRUD;
 import overengineer.projecthttp.presentation.api.exception.ApiException;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/people")
 @RequiredArgsConstructor
 public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonResponseHTTP> {
 
     private final CrudServicePerson crud;
+    private final PersonFilter<?> filter;
 
     @Override
     public PersonResponseHTTP create(PersonRequestHTTP dto) {
@@ -41,31 +42,29 @@ public class PersonRESTController implements CRUD<PersonRequestHTTP, PersonRespo
     public PersonResponseHTTP read(String id) {
         UUID uid = UUID.fromString(id);
         PersonFound personFound = crud.findById(uid);
-        Integer year = Period.between(personFound.birthDate(), LocalDate.now()).getYears();
-        return new PersonResponseHTTP(personFound.id(), personFound.name(),
-                personFound.lastName(), year, personFound.email(), personFound.active());
+        return PersonMapper.outputFoundToResponseHTTP(personFound);
     }
 
     @Override
-    public Collection<PersonResponseHTTP> readAll() {
-        Collection<PersonFound> people = crud.findAll();
-        return people.stream().map(person -> {
-            Integer year = Period.between(person.birthDate(), LocalDate.now()).getYears();
-            return new PersonResponseHTTP(
-                person.id(), person.name(), person.lastName(), year, person.email(), person.active()
-            );
-        }).toList();
+    public Collection<PersonResponseHTTP> readAll(Map<String, Object> queryParams) {
+        Collection<PersonFound> people;
+        if (queryParams.isEmpty()) {
+            people = crud.findAll();
+        } else {
+            people = crud.findAll(filter, queryParams);
+        }
+        
+        return people.stream()
+                .map(PersonMapper::outputFoundToResponseHTTP)
+                .toList();
     }
 
     @GetMapping("/actives")
-    public ResponseEntity<Collection<PersonResponseHTTP>> readAllActives() {
+    public Collection<PersonResponseHTTP> readAllActives() {
         Collection<PersonFound> peopleActives = crud.findAllActives();
-        return ResponseEntity.ok(peopleActives.stream().map(person -> {
-            Integer year = Period.between(person.birthDate(), LocalDate.now()).getYears();
-            return new PersonResponseHTTP(
-                person.id(), person.name(), person.lastName(), year, person.email(), person.active()
-            );
-        }).toList());
+        return peopleActives.stream()
+                .map(PersonMapper::outputFoundToResponseHTTP)
+                .toList();
     }
 
     @Override
